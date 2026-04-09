@@ -1,0 +1,74 @@
+# Workflow Tracker - {{PROJECT_NAME}}
+# Machine-readable task tracking format for automation and CI/CD integration
+#
+# Last synced: {{DATE}}
+# Schema version: 1.0.0
+
+metadata:
+  version: 1.0.0
+  schema_version: 1.0.0
+  last_updated: '{{DATE}}'
+  project: '{{PROJECT_NAME}}'
+  description: Machine-readable format of project backlog for automation, CI/CD, and reporting
+
+milestones:
+  completed:
+    - id: example-completed-milestone
+      title: "Authentication system implementation"
+      description: >-
+        Multi-provider authentication with email, social login, and 2FA completed.
+        See docs/auth/ for implementation details.
+      status: completed
+      priority: high
+      effort: large
+      dependencies: []
+      documentation:
+        - "docs/auth/AUTH_IMPLEMENTATION.md"
+      tags:
+        - authentication
+        - security
+      completed_date: '2025-01-15'
+  
+  in_progress:
+    - id: example-in-progress-milestone
+      title: "User profile management"
+      description: >-
+        Implement user profile viewing and editing with avatar upload and bio management.
+      status: in_progress
+      priority: high
+      effort: medium
+      dependencies:
+        - example-completed-milestone
+      documentation:
+        - "docs/features/PROFILE_IMPLEMENTATION.md"
+      tags:
+        - profile
+        - user-management
+  
+  planned:
+    - id: example-planned-milestone
+      title: "Notification system"
+      description: >-
+        Push notifications, email notifications, and in-app notification center.
+      status: planned
+      priority: medium
+      effort: large
+      dependencies:
+        - example-in-progress-milestone
+      documentation: []
+      tags:
+        - notifications
+        - engagement
+
+gaps:
+  - id: example-gap
+    title: "Missing API documentation"
+    description: >-
+      API endpoints lack comprehensive documentation with request/response examples.
+      Need to implement OpenAPI/Swagger documentation.
+    status: open
+    priority: medium
+    tags:
+      - documentation
+      - api
+      - technical-debt

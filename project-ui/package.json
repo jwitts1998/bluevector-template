@@ -1,0 +1,43 @@
+{
+  "name": "project-ui-bluevector-template",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Project-level companion UI for the unified multi-agent template",
+  "scripts": {
+    "dev": "next dev -p 3011",
+    "build": "next build",
+    "start": "next start -p 3011"
+  },
+  "dependencies": {
+    "next": "^16",
+    "react": "^19",
+    "react-dom": "^19",
+    "@ai-sdk/anthropic": "^3",
+    "ai": "^6",
+    "@radix-ui/react-dialog": "^1",
+    "@radix-ui/react-label": "^2",
+    "@radix-ui/react-scroll-area": "^1",
+    "@radix-ui/react-select": "^2",
+    "@radix-ui/react-slot": "^1",
+    "@radix-ui/react-tabs": "^1",
+    "class-variance-authority": "^0.7",
+    "clsx": "^2",
+    "lucide-react": "^0.577",
+    "tailwind-merge": "^3",
+    "zod": "^4",
+    "gray-matter": "^4",
+    "js-yaml": "^4",
+    "react-markdown": "^9",
+    "remark-gfm": "^4",
+    "rehype-highlight": "^7"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/js-yaml": "^4",
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

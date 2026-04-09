@@ -1,0 +1,70 @@
+epic: {{EPIC_NAME}}
+feature: {{FEATURE_NAME}}
+
+context:
+  phase: {{PHASE_NUMBER}}
+  spec_refs:
+    - "Docs: {{DOCUMENTATION_REFERENCE}}"
+    - "Specs: {{SPECIFICATION_REFERENCE}}"
+  notes: >
+    {{FEATURE_CONTEXT_NOTES}}
+
+defaults:
+  status: todo          # todo | in_progress | blocked | done
+  priority: medium      # high | medium | low
+  owner: {{DEFAULT_OWNER}}
+  envs: [dev]          # dev | staging | prod
+
+tasks:
+  - id: {{FEATURE_ID}}_T1_example_task
+    title: "{{Task Title}}"
+    type: story         # story | chore | spike
+    status: todo        # todo | in_progress | blocked | done
+    priority: high      # high | medium | low
+    agent_roles:
+      - {{AGENT_ROLE_1}}    # implementation | quality_assurance | testing | documentation
+      - {{AGENT_ROLE_2}}    # ui_ux | frontend | backend | database | api | security
+    domain_agents: []        # Domain micro-agents: schema-data | api-connections | auth-identity | infrastructure
+                             # maps-geo | messaging | search-discovery | payments-billing | notifications | media-content
+                             # animation-motion | accessibility | internationalization | performance | analytics-telemetry
+    spec_refs:
+      - "{{SPEC_REFERENCE_1}}"
+      - "{{SPEC_REFERENCE_2}}"
+    description: >
+      {{TASK_DESCRIPTION}}
+      
+      Detailed implementation notes, requirements, and context go here.
+    code_areas:
+      - "{{CODE_PATH_1}}"
+      - "{{CODE_PATH_2}}"
+    acceptance_criteria:
+      - "{{CRITERIA_1}}"
+      - "{{CRITERIA_2}}"
+      - "{{CRITERIA_3}}"
+    tests:
+      - "{{TEST_DESCRIPTION_1}}"
+      - "{{TEST_DESCRIPTION_2}}"
+    blocked_by: []      # List of task IDs that block this task
+    blocks: []          # List of task IDs that this task blocks
+    # backlog_ref: "tasks.yml#milestone-id"  # Optional link to portfolio backlog item
+  
+  - id: {{FEATURE_ID}}_T2_example_task
+    title: "{{Second Task Title}}"
+    type: story
+    status: todo
+    priority: medium
+    agent_roles:
+      - {{AGENT_ROLE}}
+    spec_refs:
+      - "{{SPEC_REFERENCE}}"
+    description: >
+      {{TASK_DESCRIPTION}}
+    code_areas:
+      - "{{CODE_PATH}}"
+    acceptance_criteria:
+      - "{{CRITERIA}}"
+    tests:
+      - "{{TEST_DESCRIPTION}}"
+    blocked_by:
+      - {{FEATURE_ID}}_T1_example_task  # This task depends on T1 completing
+    blocks: []

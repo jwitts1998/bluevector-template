@@ -1,0 +1,19 @@
+{
+  "name": "BlueVector AI Project",
+  "description": "GCP consulting toolkit with multi-agent development system",
+  "ide": {
+    "defaultModel": "gemini-2.5-pro",
+    "skills": {
+      "enabled": true,
+      "directory": ".claude/skills"
+    }
+  },
+  "extensions": {
+    "recommended": [
+      "google-cloud-tools",
+      "firebase-tools",
+      "docker",
+      "terraform"
+    ]
+  }
+}

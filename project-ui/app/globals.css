@@ -1,0 +1,109 @@
+@import 'tailwindcss';
+
+@theme {
+  /* BlueVector AI Brand Colors */
+  --color-background: #F8FAFC;
+  --color-foreground: #272727;
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #64748B;
+  --color-primary: #1e52f1;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #f1f5f9;
+  --color-secondary-foreground: #1a233b;
+  --color-accent: rgba(30, 82, 241, 0.06);
+  --color-accent-foreground: #1e52f1;
+  --color-destructive: #c90403;
+  --color-destructive-foreground: #ffffff;
+  --color-border: #E2E8F0;
+  --color-input: #E2E8F0;
+  --color-ring: #1e52f1;
+  --color-success: #afe535;
+  --color-success-foreground: #1a233b;
+  --color-warning: #fe9018;
+  --color-warning-foreground: #ffffff;
+  --color-info: #23c2c4;
+  --color-info-foreground: #ffffff;
+  --color-navy: #1a233b;
+  --radius: 0.75rem;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}
+
+/* Phase indicator colors */
+.phase-setup { --phase-color: #8b5cf6; }
+.phase-design { --phase-color: #23c2c4; }
+.phase-planning { --phase-color: #fe9018; }
+.phase-build { --phase-color: #afe535; }
+
+/* Phase badge styles */
+.phase-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+}
+
+.phase-badge-setup {
+  background-color: #ede9fe;
+  color: #6d28d9;
+}
+
+.phase-badge-design {
+  background-color: #e0f7f7;
+  color: #0e7c7e;
+}
+
+.phase-badge-planning {
+  background-color: #fff3e0;
+  color: #b45309;
+}
+
+.phase-badge-build {
+  background-color: #f0fce0;
+  color: #4a7a0a;
+}
+
+/* BlueVector button styles */
+.bv-btn-primary {
+  background-color: #1e52f1;
+  color: #ffffff;
+  border-radius: 9999px;
+  padding: 0.5rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+}
+.bv-btn-primary:hover {
+  background-color: #013ffa;
+  transform: scale(0.98);
+}
+
+/* BlueVector card hover */
+.bv-card {
+  border: 1px solid rgba(30, 82, 241, 0.1);
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+}
+.bv-card:hover {
+  border-color: rgba(30, 82, 241, 0.2);
+  box-shadow: 0 10px 25px rgba(30, 82, 241, 0.08);
+  transform: translateY(-2px);
+}
+
+/* BlueVector gradient background */
+.bv-gradient-bg {
+  background: linear-gradient(135deg, rgba(30, 82, 241, 0.03) 0%, rgba(0, 82, 254, 0.03) 100%);
+}
+
+.bv-gradient-primary {
+  background: linear-gradient(90deg, #1e52f1, #0052fe);
+}

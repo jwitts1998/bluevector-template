@@ -1,0 +1,141 @@
+epic: Session Monitor
+feature: Session Monitor v2 — Enhanced Analytics & UX
+
+context:
+  phase: 2
+  spec_refs:
+    - "Docs: tools/explorer/src/data/transcript-parser.ts"
+    - "Docs: tools/explorer/src/App.tsx"
+    - "Docs: templates/workflow/GIT_BRANCHING_STRATEGY.md"
+  notes: >
+    Building on the v1 Session Monitor (transcript parsing, flow visualization,
+    detail panels). V2 adds cost tracking, search, multi-session, timeline, and export.
+    All work on feature/agent-monitor-dashboard branch.
+
+defaults:
+  status: todo
+  priority: high
+  owner: agent
+  envs: [dev]
+
+tasks:
+  - id: MON_T1_token_cost
+    title: "Token cost calculation with model pricing"
+    type: story
+    status: done
+    priority: high
+    agent_roles:
+      - implementation
+    description: >
+      Add model pricing data and calculate estimated $ cost from token counts.
+      Show cost in MonitorNode tooltip, SessionDetailPanel overview stats,
+      and the monitor legend summary bar. Include a model selector dropdown
+      (GPT-4o, Claude Sonnet, Claude Opus, GPT-4o-mini) since cost varies by model.
+    code_areas:
+      - "tools/explorer/src/data/transcript-parser.ts"
+      - "tools/explorer/src/components/MonitorNode.tsx"
+      - "tools/explorer/src/components/SessionDetailPanel.tsx"
+      - "tools/explorer/src/App.tsx"
+    acceptance_criteria:
+      - "Model pricing data for at least 4 major models"
+      - "Cost displayed in session overview stats"
+      - "Cost per turn visible in node or detail panel"
+      - "Model selector updates cost calculations reactively"
+      - "TypeScript compiles without errors"
+    blocked_by: []
+    blocks: []
+
+  - id: MON_T2_search_filter
+    title: "Search and filter within sessions"
+    type: story
+    status: done
+    priority: high
+    agent_roles:
+      - implementation
+    description: >
+      Add search functionality to the monitor view. Search bar in the legend panel
+      filters nodes by text content, tool names, and role. Matching nodes stay fully
+      visible, non-matching nodes are dimmed. Clear button resets filter.
+    code_areas:
+      - "tools/explorer/src/App.tsx"
+      - "tools/explorer/src/styles/nodes.css"
+    acceptance_criteria:
+      - "Search bar in monitor legend panel"
+      - "Typing filters nodes in real-time"
+      - "Matches against turn text, tool names, and role"
+      - "Non-matching nodes visually dimmed"
+      - "Clear button resets filter"
+      - "TypeScript compiles without errors"
+    blocked_by: []
+    blocks: []
+
+  - id: MON_T3_multi_session
+    title: "Multi-session support with session list"
+    type: story
+    status: done
+    priority: medium
+    agent_roles:
+      - implementation
+    description: >
+      Allow loading multiple transcript files. Show a session list/selector
+      in the legend panel. Clicking a session switches the flow view.
+      Session overview can show comparison stats across loaded sessions.
+    code_areas:
+      - "tools/explorer/src/App.tsx"
+      - "tools/explorer/src/components/FileDropZone.tsx"
+      - "tools/explorer/src/components/SessionDetailPanel.tsx"
+    acceptance_criteria:
+      - "Can load multiple sessions without losing previous ones"
+      - "Session list shows loaded sessions with basic stats"
+      - "Clicking a session switches the flow view"
+      - "TypeScript compiles without errors"
+    blocked_by: []
+    blocks: []
+
+  - id: MON_T4_timeline_view
+    title: "Timeline visualization with token bars"
+    type: story
+    status: done
+    priority: medium
+    agent_roles:
+      - implementation
+    description: >
+      Add a horizontal timeline bar at the bottom of the monitor view showing
+      each turn as a segment. Segment width proportional to estimated tokens.
+      Color-coded by role (user/agent). Click a segment to select that node
+      in the flow view. Shows cumulative token usage.
+    code_areas:
+      - "tools/explorer/src/components/Timeline.tsx"
+      - "tools/explorer/src/App.tsx"
+      - "tools/explorer/src/styles/nodes.css"
+    acceptance_criteria:
+      - "Timeline bar visible at bottom of monitor view"
+      - "Segments sized proportionally to token count"
+      - "Color-coded by turn role"
+      - "Clicking a segment selects the corresponding flow node"
+      - "Cumulative token counter visible"
+      - "TypeScript compiles without errors"
+    blocked_by: []
+    blocks: []
+
+  - id: MON_T5_export
+    title: "Export session analysis as markdown"
+    type: story
+    status: done
+    priority: low
+    agent_roles:
+      - implementation
+    description: >
+      Add an Export button to the session overview panel that generates
+      a markdown summary of the session. Include stats, tool usage frequency,
+      agent flow description, and key metrics. Download as .md file.
+    code_areas:
+      - "tools/explorer/src/data/transcript-parser.ts"
+      - "tools/explorer/src/components/SessionDetailPanel.tsx"
+    acceptance_criteria:
+      - "Export button in overview panel"
+      - "Generated markdown includes all session stats"
+      - "Downloads as .md file"
+      - "TypeScript compiles without errors"
+    blocked_by: []
+    blocks: []
