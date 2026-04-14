@@ -1,9 +1,18 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Workflow, Bot, Plus, ArrowRight, GitBranch, Repeat, Users, Zap } from 'lucide-react';
+import { Workflow, Bot, Plus, FileText, GitBranch, Repeat, Users, Zap } from 'lucide-react';
+
+interface FlowDoc {
+  id: string;
+  title: string;
+  type: string;
+  updatedAt?: string;
+}
 
 const FLOW_TYPES = [
   {
@@ -13,6 +22,7 @@ const FLOW_TYPES = [
     agent: '@designer',
     color: 'text-violet-600',
     bgColor: 'bg-violet-50',
+    template: 'user-flow',
   },
   {
     title: 'System Sequence Diagrams',
@@ -21,6 +31,7 @@ const FLOW_TYPES = [
     agent: '@gcp-specialist',
     color: 'text-indigo-600',
     bgColor: 'bg-indigo-50',
+    template: 'system-sequence',
   },
   {
     title: 'State Machines',
@@ -29,6 +40,7 @@ const FLOW_TYPES = [
     agent: '@orchestration-specialist',
     color: 'text-purple-600',
     bgColor: 'bg-purple-50',
+    template: 'state-machine',
   },
   {
     title: 'Event-Driven Architecture',
@@ -37,10 +49,28 @@ const FLOW_TYPES = [
     agent: '@firebase-specialist',
     color: 'text-amber-600',
     bgColor: 'bg-amber-50',
+    template: 'event-driven',
   },
 ];
 
 export default function FlowsPage() {
+  const router = useRouter();
+  const [flows, setFlows] = useState<FlowDoc[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/docs')
+      .then(r => r.json())
+      .then(data => {
+        const docs: FlowDoc[] = (data.documents || []).filter(
+          (d: FlowDoc) => d.type === 'flows' || d.title?.toLowerCase().includes('flow')
+        );
+        setFlows(docs);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between">
@@ -50,7 +80,10 @@ export default function FlowsPage() {
             User flows, sequence diagrams, state machines, and architecture diagrams
           </p>
         </div>
-        <Button className="gap-1 bg-violet-600 hover:bg-violet-700">
+        <Button
+          className="gap-1 bg-violet-600 hover:bg-violet-700"
+          onClick={() => router.push('/design/create?type=flows')}
+        >
           <Plus className="h-4 w-4" /> New Flow
         </Button>
       </div>
@@ -59,7 +92,11 @@ export default function FlowsPage() {
         {FLOW_TYPES.map(flow => {
           const Icon = flow.icon;
           return (
-            <Card key={flow.title} className="hover:shadow-sm transition-all">
+            <Card
+              key={flow.title}
+              className="hover:shadow-sm transition-all cursor-pointer"
+              onClick={() => router.push(`/design/create?type=flows&template=${flow.template}`)}
+            >
               <CardContent className="py-5">
                 <div className="flex items-start gap-4">
                   <div className={`h-10 w-10 rounded-lg ${flow.bgColor} flex items-center justify-center shrink-0`}>
@@ -81,16 +118,44 @@ export default function FlowsPage() {
         })}
       </div>
 
-      {/* Empty state */}
-      <Card>
-        <CardContent className="py-12 text-center text-muted-foreground">
-          <Workflow className="h-12 w-12 mx-auto mb-3 opacity-20" />
-          <p className="font-medium">No process flows yet</p>
-          <p className="text-sm mt-1">
-            Flows will be generated as part of the Product Design Blueprint process
-          </p>
-        </CardContent>
-      </Card>
+      {/* Existing flow documents */}
+      {loading ? (
+        <Card>
+          <CardContent className="py-8 text-center text-muted-foreground">
+            <p className="text-sm">Loading flow documents...</p>
+          </CardContent>
+        </Card>
+      ) : flows.length > 0 ? (
+        <div>
+          <h2 className="text-lg font-semibold mb-3">Existing Flows</h2>
+          <div className="space-y-2">
+            {flows.map(flow => (
+              <Card key={flow.id} className="hover:shadow-sm transition-all cursor-pointer" onClick={() => router.push(`/design/create?type=flows&doc=${flow.id}`)}>
+                <CardContent className="py-3 flex items-center gap-3">
+                  <FileText className="h-4 w-4 text-violet-500 shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm truncate">{flow.title}</p>
+                    {flow.updatedAt && (
+                      <p className="text-xs text-muted-foreground">Updated {new Date(flow.updatedAt).toLocaleDateString()}</p>
+                    )}
+                  </div>
+                  <Badge variant="secondary" className="text-xs shrink-0">{flow.type}</Badge>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <Card>
+          <CardContent className="py-12 text-center text-muted-foreground">
+            <Workflow className="h-12 w-12 mx-auto mb-3 opacity-20" />
+            <p className="font-medium">No process flows yet</p>
+            <p className="text-sm mt-1">
+              Click a flow type above or use the New Flow button to get started
+            </p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

@@ -13,20 +13,21 @@ interface ProjectInfo {
   docsCount: number;
 }
 
-const PHASE_MAP: Record<string, { label: string; className: string }> = {
-  '/setup': { label: 'Phase 1 — Setup', className: 'phase-badge-setup' },
-  '/design': { label: 'Phase 2 — Design', className: 'phase-badge-design' },
-  '/planning': { label: 'Phase 3 — Planning', className: 'phase-badge-planning' },
-  '/build': { label: 'Phase 4 — Build', className: 'phase-badge-build' },
-  '/tasks': { label: 'Phase 3 — Planning', className: 'phase-badge-planning' },
-  '/chat': { label: 'Phase 4 — Build', className: 'phase-badge-build' },
-  '/agents': { label: 'Phase 4 — Build', className: 'phase-badge-build' },
+const AREA_MAP: Record<string, { label: string; className: string }> = {
+  '/setup': { label: 'System', className: 'phase-badge-setup' },
+  '/design': { label: 'Design', className: 'phase-badge-design' },
+  '/planning': { label: 'Plan', className: 'phase-badge-planning' },
+  '/build': { label: 'Build', className: 'phase-badge-build' },
+  '/tasks': { label: 'Plan', className: 'phase-badge-planning' },
+  '/chat': { label: 'AI Chat', className: 'phase-badge-build' },
+  '/agents': { label: 'Build', className: 'phase-badge-build' },
+  '/docs': { label: 'System', className: 'phase-badge-setup' },
 };
 
-function getCurrentPhase(pathname: string): { label: string; className: string } | null {
-  for (const [prefix, phase] of Object.entries(PHASE_MAP)) {
+function getCurrentArea(pathname: string): { label: string; className: string } | null {
+  for (const [prefix, area] of Object.entries(AREA_MAP)) {
     if (pathname === prefix || pathname.startsWith(prefix + '/')) {
-      return phase;
+      return area;
     }
   }
   return null;
@@ -35,7 +36,7 @@ function getCurrentPhase(pathname: string): { label: string; className: string }
 export function Header() {
   const [project, setProject] = useState<ProjectInfo | null>(null);
   const pathname = usePathname();
-  const currentPhase = getCurrentPhase(pathname);
+  const currentArea = getCurrentArea(pathname);
 
   useEffect(() => {
     fetch('/api/project')
@@ -47,15 +48,13 @@ export function Header() {
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center border-b bg-background/95 backdrop-blur px-4 md:px-6">
       <div className="flex items-center gap-3">
-        {currentPhase && (
-          <span className={`phase-badge ${currentPhase.className}`}>
-            {currentPhase.label}
+        <h1 className="text-lg font-semibold" style={{ color: '#1e52f1' }}>
+          {project?.name || 'BlueVector.AI'}
+        </h1>
+        {currentArea && (
+          <span className={`phase-badge ${currentArea.className}`}>
+            {currentArea.label}
           </span>
-        )}
-        {!currentPhase && (
-          <h1 className="text-lg font-semibold" style={{ color: '#1e52f1' }}>
-            {project?.name || 'BlueVector.AI'}
-          </h1>
         )}
       </div>
       <div className="ml-auto flex items-center gap-4 text-sm">

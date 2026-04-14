@@ -23,34 +23,27 @@ import {
   FolderKanban,
 } from 'lucide-react';
 
-const phases = [
+const navGroups = [
   {
-    label: 'Overview',
+    label: 'Core',
     items: [
       { label: 'Dashboard', href: '/', icon: LayoutDashboard },
+      { label: 'AI Chat', href: '/chat', icon: MessageSquare },
     ],
   },
   {
-    label: 'Phase 1 — Setup',
-    phase: 'setup',
-    items: [
-      { label: 'GCP Setup', href: '/setup', icon: Cloud },
-      { label: 'Configuration', href: '/setup/config', icon: Settings },
-    ],
-  },
-  {
-    label: 'Phase 2 — Design',
-    phase: 'design',
+    label: 'Design',
+    color: 'bg-cyan-500',
     items: [
       { label: 'Design Hub', href: '/design', icon: Palette },
       { label: 'Document Builder', href: '/design/create', icon: PenTool },
-      { label: 'Product Blueprints', href: '/design/blueprints', icon: PenTool },
+      { label: 'Blueprints', href: '/design/blueprints', icon: PenTool },
       { label: 'Process Flows', href: '/design/flows', icon: Workflow },
     ],
   },
   {
-    label: 'Phase 3 — Planning',
-    phase: 'planning',
+    label: 'Plan',
+    color: 'bg-orange-500',
     items: [
       { label: 'Planning Hub', href: '/planning', icon: Map },
       { label: 'Epics & Stories', href: '/planning/epics', icon: FolderKanban },
@@ -58,29 +51,26 @@ const phases = [
     ],
   },
   {
-    label: 'Phase 4 — Build',
-    phase: 'build',
+    label: 'Build',
+    color: 'bg-lime-500',
     items: [
       { label: 'Build Hub', href: '/build', icon: Hammer },
-      { label: 'AI Chat', href: '/chat', icon: MessageSquare },
       { label: 'Agents', href: '/agents', icon: Bot },
       { label: 'Analytics', href: '/build/analytics', icon: BarChart3 },
     ],
   },
   {
-    label: 'Resources',
+    label: 'System',
+    color: 'bg-purple-500',
     items: [
+      { label: 'GCP Setup', href: '/setup', icon: Cloud },
+      { label: 'Configuration', href: '/setup/config', icon: Settings },
       { label: 'Docs', href: '/docs', icon: FileText },
     ],
   },
 ];
 
-const PHASE_COLORS: Record<string, string> = {
-  setup: 'bg-purple-500',
-  design: 'bg-cyan-500',
-  planning: 'bg-orange-500',
-  build: 'bg-lime-500',
-};
+// Colors are now inline on each navGroup
 
 export function Sidebar() {
   const { sidebarCollapsed: collapsed, toggleSidebar } = useLayout();
@@ -115,21 +105,21 @@ export function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-2 px-2">
-        {phases.map((group) => (
+        {navGroups.map((group) => (
           <div key={group.label} className="mb-1">
             {!collapsed && (
               <div className="flex items-center gap-2 px-3 py-2">
-                {group.phase && (
-                  <div className={cn('w-1.5 h-1.5 rounded-full', PHASE_COLORS[group.phase])} />
+                {group.color && (
+                  <div className={cn('w-1.5 h-1.5 rounded-full', group.color)} />
                 )}
                 <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                   {group.label}
                 </span>
               </div>
             )}
-            {collapsed && group.phase && (
+            {collapsed && group.color && (
               <div className="flex justify-center py-1">
-                <div className={cn('w-6 h-0.5 rounded-full', PHASE_COLORS[group.phase])} />
+                <div className={cn('w-6 h-0.5 rounded-full', group.color)} />
               </div>
             )}
             {group.items.map((item) => {

@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "next dev -p 3011",
     "build": "next build",
-    "start": "next start -p 3011"
+    "start": "next start -p 3011",
+    "test:personas": "npx tsx scripts/persona-test.ts --all",
+    "test:persona": "npx tsx scripts/persona-test.ts --persona"
   },
   "dependencies": {
     "next": "^16",

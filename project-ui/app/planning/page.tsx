@@ -2,23 +2,20 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-  Map,
   FolderKanban,
   ListChecks,
   ArrowRight,
   Bot,
-  Target,
   Users,
   ClipboardCheck,
-  FileCheck,
   Plus,
   CheckCircle2,
   Circle,
-  BarChart3,
 } from 'lucide-react';
 
 interface Task {
@@ -39,6 +36,7 @@ const PLANNING_WORKFLOW = [
     icon: FolderKanban,
     color: 'text-amber-600',
     bgColor: 'bg-amber-50',
+    prompt: 'Generate epics from the Product Design Blueprint',
   },
   {
     step: 2,
@@ -48,6 +46,7 @@ const PLANNING_WORKFLOW = [
     icon: Users,
     color: 'text-orange-600',
     bgColor: 'bg-orange-50',
+    prompt: 'Break the epics into user stories with acceptance criteria',
   },
   {
     step: 3,
@@ -57,6 +56,7 @@ const PLANNING_WORKFLOW = [
     icon: ClipboardCheck,
     color: 'text-red-600',
     bgColor: 'bg-red-50',
+    prompt: 'Map technical requirements, GCP dependencies, and API contracts for each user story',
   },
   {
     step: 4,
@@ -66,10 +66,12 @@ const PLANNING_WORKFLOW = [
     icon: ListChecks,
     color: 'text-rose-600',
     bgColor: 'bg-rose-50',
+    prompt: 'Create granular development tasks with agent role assignments and priority levels',
   },
 ];
 
 export default function PlanningPage() {
+  const router = useRouter();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -96,7 +98,6 @@ export default function PlanningPage() {
             Break designs into epics, features, user stories, and executable tasks
           </p>
         </div>
-        <Badge className="phase-badge phase-badge-planning">Phase 3</Badge>
       </div>
 
       {/* Stats Row */}
@@ -150,7 +151,12 @@ export default function PlanningPage() {
                           <Bot className="h-3 w-3 mr-1" />
                           {step.agent}
                         </Badge>
-                        <Button variant="ghost" size="sm" className="text-xs h-7 gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-xs h-7 gap-1"
+                          onClick={() => router.push('/chat?prompt=' + encodeURIComponent(step.prompt))}
+                        >
                           <Plus className="h-3 w-3" /> Run
                         </Button>
                       </div>
@@ -232,22 +238,6 @@ export default function PlanningPage() {
         </div>
       )}
 
-      {/* Next Phase */}
-      <Card className="border-green-200 bg-green-50/30">
-        <CardContent className="py-4 flex items-center justify-between">
-          <div>
-            <p className="font-semibold text-sm">Ready to Build?</p>
-            <p className="text-xs text-muted-foreground">
-              Tasks defined. Start executing with 52 specialist agents and CI/CD deployment
-            </p>
-          </div>
-          <Link href="/build">
-            <Button size="sm" className="gap-1 bg-green-600 hover:bg-green-700">
-              Phase 4: Build <ArrowRight className="h-3 w-3" />
-            </Button>
-          </Link>
-        </CardContent>
-      </Card>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -141,23 +141,79 @@ const CATEGORIES: Record<string, { label: string; description: string }> = {
 export default function SetupPage() {
   const [items, setItems] = useState(SETUP_ITEMS);
   const [envValues, setEnvValues] = useState<Record<string, string>>({});
+  const [saving, setSaving] = useState(false);
+  const [saveMsg, setSaveMsg] = useState('');
+
+  // Load persisted state on mount
+  useEffect(() => {
+    fetch('/api/setup')
+      .then(r => r.json())
+      .then(data => {
+        if (data.items && Object.keys(data.items).length > 0) {
+          setItems(prev =>
+            prev.map(item => ({
+              ...item,
+              status: data.items[item.id] || item.status,
+            }))
+          );
+        }
+        if (data.envValues) {
+          setEnvValues(data.envValues);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  // Persist state whenever items change
+  const persistState = useCallback((updatedItems: SetupItem[], updatedEnv?: Record<string, string>) => {
+    const itemMap: Record<string, string> = {};
+    updatedItems.forEach(i => { itemMap[i.id] = i.status; });
+    fetch('/api/setup', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: itemMap, envValues: updatedEnv || envValues }),
+    }).catch(() => {});
+  }, [envValues]);
 
   const toggleStatus = (id: string) => {
-    setItems(prev =>
-      prev.map(item =>
+    setItems(prev => {
+      const updated = prev.map(item =>
         item.id === id
           ? {
               ...item,
-              status:
+              status: (
                 item.status === 'not_started'
                   ? 'in_progress'
                   : item.status === 'in_progress'
                   ? 'complete'
-                  : 'not_started',
+                  : 'not_started'
+              ) as SetupItem['status'],
             }
           : item
-      )
-    );
+      );
+      persistState(updated);
+      return updated;
+    });
+  };
+
+  const handleSaveEnv = async () => {
+    setSaving(true);
+    setSaveMsg('');
+    try {
+      const itemMap: Record<string, string> = {};
+      items.forEach(i => { itemMap[i.id] = i.status; });
+      const res = await fetch('/api/setup', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: itemMap, envValues }),
+      });
+      const data = await res.json();
+      setSaveMsg(data.success ? 'Saved to .env.local' : 'Save failed');
+    } catch {
+      setSaveMsg('Save failed');
+    }
+    setSaving(false);
+    setTimeout(() => setSaveMsg(''), 3000);
   };
 
   const completedCount = items.filter(i => i.status === 'complete').length;
@@ -236,13 +292,14 @@ export default function SetupPage() {
               />
             </div>
           </div>
-          <div className="mt-4 flex gap-2">
-            <Button size="sm" className="text-xs bg-purple-600 hover:bg-purple-700">
-              Save to .env.local
+          <div className="mt-4 flex items-center gap-2">
+            <Button size="sm" className="text-xs bg-purple-600 hover:bg-purple-700" onClick={handleSaveEnv} disabled={saving}>
+              {saving ? 'Saving...' : 'Save to .env.local'}
             </Button>
             <Button size="sm" variant="outline" className="text-xs">
               Push to Secret Manager
             </Button>
+            {saveMsg && <span className="text-xs text-green-600 font-medium">{saveMsg}</span>}
           </div>
         </CardContent>
       </Card>
@@ -303,20 +360,16 @@ export default function SetupPage() {
         );
       })}
 
-      {/* Next Step */}
-      <Card className="border-sky-200 bg-sky-50/30">
+      {/* Validation */}
+      <Card className="border-green-200 bg-green-50/30">
         <CardContent className="py-4 flex items-center justify-between">
           <div>
-            <p className="font-semibold text-sm">Ready for Design?</p>
+            <p className="font-semibold text-sm">Validate Setup</p>
             <p className="text-xs text-muted-foreground">
-              Once GCP is configured, move to Phase 2 to create Product Design Blueprints
+              Run the validation script to check for remaining template variables
             </p>
           </div>
-          <Link href="/design">
-            <Button size="sm" className="gap-1 bg-sky-600 hover:bg-sky-700">
-              Phase 2: Design <ArrowRight className="h-3 w-3" />
-            </Button>
-          </Link>
+          <code className="text-xs bg-muted px-3 py-1.5 rounded font-mono">./scripts/validate.sh</code>
         </CardContent>
       </Card>
     </div>

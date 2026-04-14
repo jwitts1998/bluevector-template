@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,7 @@ interface DocNode {
 }
 
 export default function BlueprintsPage() {
+  const router = useRouter();
   const [blueprints, setBlueprints] = useState<string[]>([]);
   const [selectedContent, setSelectedContent] = useState<string>('');
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
@@ -58,7 +60,7 @@ export default function BlueprintsPage() {
             Comprehensive product specs: user personas, journey maps, feature matrix, success metrics
           </p>
         </div>
-        <Button className="gap-1 bg-sky-600 hover:bg-sky-700">
+        <Button className="gap-1 bg-sky-600 hover:bg-sky-700" onClick={() => router.push('/design/create?type=pdb')}>
           <Plus className="h-4 w-4" /> New Blueprint
         </Button>
       </div>

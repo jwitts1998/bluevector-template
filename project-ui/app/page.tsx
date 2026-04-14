@@ -11,8 +11,6 @@ import {
   Map,
   Hammer,
   ArrowRight,
-  CheckCircle2,
-  Circle,
   Bot,
   ListChecks,
   FileText,
@@ -22,7 +20,6 @@ import {
   FolderKanban,
   MessageSquare,
   BarChart3,
-  ExternalLink,
 } from 'lucide-react';
 
 interface ProjectInfo {
@@ -41,99 +38,71 @@ interface Task {
   priority: string;
 }
 
-const PHASES = [
+const CAPABILITIES = [
   {
-    id: 'setup',
-    number: 1,
-    title: 'Setup',
-    subtitle: 'GCP Project & Infrastructure',
-    description: 'Configure GCP project, credentials, Google AI Studio key, Workspace integration, and MCP servers.',
-    icon: Cloud,
-    href: '/setup',
-    color: 'text-purple-600',
-    bgColor: 'bg-purple-50',
-    borderColor: 'border-purple-200',
-    badgeClass: 'phase-badge-setup',
-    checklist: [
-      { label: 'GCP Project ID configured', key: 'gcp_project' },
-      { label: 'Firebase Auth setup', key: 'firebase' },
-      { label: 'Google AI Studio key', key: 'ai_studio' },
-      { label: 'MCP servers activated', key: 'mcp' },
-      { label: 'Google Workspace CLI', key: 'gws' },
-      { label: 'Secret Manager configured', key: 'secrets' },
-    ],
+    id: 'chat',
+    title: 'AI Chat',
+    description: 'Project-scoped conversational assistant with full context.',
+    icon: MessageSquare,
+    href: '/chat',
+    color: 'text-blue-600',
+    bgColor: 'bg-blue-50',
+    borderColor: 'border-blue-200',
   },
   {
     id: 'design',
-    number: 2,
-    title: 'Design & Ideation',
-    subtitle: 'Product Design Blueprints',
-    description: 'Create Product Design Blueprints, technical solution designs, process flow diagrams, and wireframes.',
+    title: 'Design',
+    description: 'Product blueprints, architecture docs, process flows, wireframes.',
     icon: Palette,
     href: '/design',
     color: 'text-sky-600',
     bgColor: 'bg-sky-50',
     borderColor: 'border-sky-200',
-    badgeClass: 'phase-badge-design',
-    checklist: [
-      { label: 'Product Design Blueprint (PDB)', key: 'pdb' },
-      { label: 'Technical Architecture Design', key: 'tad' },
-      { label: 'Process flow diagrams', key: 'flows' },
-      { label: 'Wireframes & UI concepts', key: 'wireframes' },
-      { label: 'Data model design', key: 'data_model' },
-    ],
   },
   {
-    id: 'planning',
-    number: 3,
-    title: 'Planning',
-    subtitle: 'Epics, Stories & Tasks',
-    description: 'Break down designs into epics, features, user stories, and tasks with acceptance criteria and functional requirements.',
+    id: 'plan',
+    title: 'Plan',
+    description: 'Epics, user stories, task breakdown, and sprint planning.',
     icon: Map,
     href: '/planning',
     color: 'text-amber-600',
     bgColor: 'bg-amber-50',
     borderColor: 'border-amber-200',
-    badgeClass: 'phase-badge-planning',
-    checklist: [
-      { label: 'Epics defined', key: 'epics' },
-      { label: 'User stories with acceptance criteria', key: 'stories' },
-      { label: 'Technical requirements documented', key: 'tech_reqs' },
-      { label: 'Task breakdown complete', key: 'tasks' },
-      { label: 'Sprint/iteration plan', key: 'sprint' },
-    ],
   },
   {
     id: 'build',
-    number: 4,
     title: 'Build',
-    subtitle: 'Development & Deployment',
-    description: 'Execute development with 52 specialist agents, AI chat, CI/CD pipelines, and GCP deployment.',
+    description: 'Agent execution, CI/CD pipelines, deployment to GCP.',
     icon: Hammer,
     href: '/build',
     color: 'text-green-600',
     bgColor: 'bg-green-50',
     borderColor: 'border-green-200',
-    badgeClass: 'phase-badge-build',
-    checklist: [
-      { label: 'Development environment ready', key: 'dev_env' },
-      { label: 'Agent execution started', key: 'agents_active' },
-      { label: 'CI/CD pipeline configured', key: 'cicd' },
-      { label: 'Deployed to Cloud Run', key: 'deployed' },
-      { label: 'Monitoring & observability', key: 'monitoring' },
-    ],
   },
 ];
 
+const QUICK_LINKS = [
+  { label: 'Document Builder', href: '/design/create', icon: PenTool, color: 'text-sky-600' },
+  { label: 'Blueprints', href: '/design/blueprints', icon: PenTool, color: 'text-sky-600' },
+  { label: 'Process Flows', href: '/design/flows', icon: Workflow, color: 'text-sky-600' },
+  { label: 'Epics & Stories', href: '/planning/epics', icon: FolderKanban, color: 'text-amber-600' },
+  { label: 'Task Board', href: '/tasks', icon: ListChecks, color: 'text-amber-600' },
+  { label: 'Agents', href: '/agents', icon: Bot, color: 'text-green-600' },
+  { label: 'Analytics', href: '/build/analytics', icon: BarChart3, color: 'text-green-600' },
+  { label: 'GCP Setup', href: '/setup', icon: Cloud, color: 'text-purple-600' },
+  { label: 'Configuration', href: '/setup/config', icon: Settings, color: 'text-purple-600' },
+  { label: 'Docs', href: '/docs', icon: FileText, color: 'text-slate-600' },
+];
+
 const GCP_SERVICES = [
-  { name: 'Cloud Run', status: 'ready', desc: 'Serverless containers' },
-  { name: 'Cloud SQL', status: 'ready', desc: 'Managed PostgreSQL' },
-  { name: 'Firebase Auth', status: 'ready', desc: 'Authentication' },
-  { name: 'Firebase Hosting', status: 'ready', desc: 'CDN-backed hosting' },
-  { name: 'Secret Manager', status: 'ready', desc: 'Secrets vault' },
-  { name: 'Cloud Build', status: 'ready', desc: 'CI/CD pipelines' },
-  { name: 'Cloud Functions', status: 'ready', desc: 'Event-driven compute' },
-  { name: 'Artifact Registry', status: 'ready', desc: 'Container images' },
+  { name: 'Cloud Run', desc: 'Serverless containers' },
+  { name: 'Cloud SQL', desc: 'Managed PostgreSQL' },
+  { name: 'Firebase Auth', desc: 'Authentication' },
+  { name: 'Firebase Hosting', desc: 'CDN-backed hosting' },
+  { name: 'Secret Manager', desc: 'Secrets vault' },
+  { name: 'Cloud Build', desc: 'CI/CD pipelines' },
+  { name: 'Cloud Functions', desc: 'Event-driven compute' },
+  { name: 'Artifact Registry', desc: 'Container images' },
 ];
 
 export default function DashboardPage() {
@@ -183,42 +152,25 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Engagement Lifecycle — 4 Phases */}
+      {/* Capabilities — equal access, no sequence */}
       <div>
-        <h2 className="text-lg font-semibold mb-4">Engagement Lifecycle</h2>
+        <h2 className="text-lg font-semibold mb-4">Capabilities</h2>
         <div className="grid gap-4 lg:grid-cols-4">
-          {PHASES.map((phase) => {
-            const Icon = phase.icon;
+          {CAPABILITIES.map((cap) => {
+            const Icon = cap.icon;
             return (
-              <Link key={phase.id} href={phase.href}>
-                <Card className={`hover:shadow-md transition-all cursor-pointer border-l-4 ${phase.borderColor} h-full`}>
+              <Link key={cap.id} href={cap.href}>
+                <Card className={`hover:shadow-md transition-all cursor-pointer border-l-4 ${cap.borderColor} h-full`}>
                   <CardHeader className="pb-2">
-                    <div className="flex items-center justify-between">
-                      <div className={`h-8 w-8 rounded-lg ${phase.bgColor} flex items-center justify-center`}>
-                        <Icon className={`h-4 w-4 ${phase.color}`} />
-                      </div>
-                      <span className={`text-xs font-bold ${phase.color}`}>Phase {phase.number}</span>
+                    <div className={`h-8 w-8 rounded-lg ${cap.bgColor} flex items-center justify-center`}>
+                      <Icon className={`h-4 w-4 ${cap.color}`} />
                     </div>
-                    <CardTitle className="text-base mt-2">{phase.title}</CardTitle>
-                    <p className="text-xs text-muted-foreground font-medium">{phase.subtitle}</p>
+                    <CardTitle className="text-base mt-2">{cap.title}</CardTitle>
                   </CardHeader>
                   <CardContent className="pt-0">
-                    <p className="text-xs text-muted-foreground leading-relaxed mb-3">
-                      {phase.description}
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      {cap.description}
                     </p>
-                    <div className="space-y-1.5">
-                      {phase.checklist.slice(0, 3).map((item) => (
-                        <div key={item.key} className="flex items-center gap-2 text-xs text-muted-foreground">
-                          <Circle className="h-3 w-3 shrink-0" />
-                          <span>{item.label}</span>
-                        </div>
-                      ))}
-                      {phase.checklist.length > 3 && (
-                        <p className="text-xs text-muted-foreground/60 pl-5">
-                          +{phase.checklist.length - 3} more items
-                        </p>
-                      )}
-                    </div>
                   </CardContent>
                 </Card>
               </Link>
@@ -227,87 +179,26 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* GCP Services Grid */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">GCP Service Stack</h2>
-          <Link href="/setup">
-            <Button variant="ghost" size="sm" className="text-xs gap-1">
-              Configure <ArrowRight className="h-3 w-3" />
-            </Button>
-          </Link>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {GCP_SERVICES.map((service) => (
-            <Card key={service.name} className="hover:bg-accent/30 transition-colors">
-              <CardContent className="py-3 flex items-center gap-3">
-                <div className="h-8 w-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
-                  <Cloud className="h-4 w-4 text-blue-600" />
-                </div>
-                <div className="min-w-0">
-                  <p className="font-medium text-sm">{service.name}</p>
-                  <p className="text-xs text-muted-foreground">{service.desc}</p>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-
-      {/* Quick Actions + Stats */}
+      {/* Quick Links + Stats */}
       <div className="grid gap-6 lg:grid-cols-3">
-        {/* Quick Actions */}
+        {/* Quick Links */}
         <div className="lg:col-span-2">
-          <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <Link href="/setup">
-              <Card className="hover:bg-accent/50 transition-colors cursor-pointer">
-                <CardContent className="flex items-center gap-3 py-4">
-                  <Settings className="h-5 w-5 text-purple-600" />
-                  <div>
-                    <p className="font-medium text-sm">Configure GCP Project</p>
-                    <p className="text-xs text-muted-foreground">Set up credentials & services</p>
-                  </div>
-                  <ArrowRight className="h-4 w-4 ml-auto text-muted-foreground" />
-                </CardContent>
-              </Card>
-            </Link>
-            <Link href="/design/blueprints">
-              <Card className="hover:bg-accent/50 transition-colors cursor-pointer">
-                <CardContent className="flex items-center gap-3 py-4">
-                  <PenTool className="h-5 w-5 text-sky-600" />
-                  <div>
-                    <p className="font-medium text-sm">Create Product Blueprint</p>
-                    <p className="text-xs text-muted-foreground">Start with @idea-to-pdb</p>
-                  </div>
-                  <ArrowRight className="h-4 w-4 ml-auto text-muted-foreground" />
-                </CardContent>
-              </Card>
-            </Link>
-            <Link href="/planning">
-              <Card className="hover:bg-accent/50 transition-colors cursor-pointer">
-                <CardContent className="flex items-center gap-3 py-4">
-                  <FolderKanban className="h-5 w-5 text-amber-600" />
-                  <div>
-                    <p className="font-medium text-sm">Plan Epics & Stories</p>
-                    <p className="text-xs text-muted-foreground">Break down into tasks</p>
-                  </div>
-                  <ArrowRight className="h-4 w-4 ml-auto text-muted-foreground" />
-                </CardContent>
-              </Card>
-            </Link>
-            <Link href="/chat">
-              <Card className="hover:bg-accent/50 transition-colors cursor-pointer">
-                <CardContent className="flex items-center gap-3 py-4">
-                  <MessageSquare className="h-5 w-5 text-green-600" />
-                  <div>
-                    <p className="font-medium text-sm">Open AI Chat</p>
-                    <p className="text-xs text-muted-foreground">Project-scoped assistant</p>
-                  </div>
-                  <ArrowRight className="h-4 w-4 ml-auto text-muted-foreground" />
-                </CardContent>
-              </Card>
-            </Link>
+          <h2 className="text-lg font-semibold mb-4">Quick Links</h2>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {QUICK_LINKS.map((link) => {
+              const Icon = link.icon;
+              return (
+                <Link key={link.href} href={link.href}>
+                  <Card className="hover:bg-accent/50 transition-colors cursor-pointer">
+                    <CardContent className="flex items-center gap-3 py-3">
+                      <Icon className={`h-4 w-4 ${link.color}`} />
+                      <span className="text-sm font-medium">{link.label}</span>
+                      <ArrowRight className="h-3 w-3 ml-auto text-muted-foreground" />
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
           </div>
         </div>
 
@@ -362,14 +253,41 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* MCP Ecosystem Summary */}
+      {/* GCP Services Grid */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold">GCP Service Stack</h2>
+          <Link href="/setup">
+            <Button variant="ghost" size="sm" className="text-xs gap-1">
+              Configure <ArrowRight className="h-3 w-3" />
+            </Button>
+          </Link>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {GCP_SERVICES.map((service) => (
+            <Card key={service.name} className="hover:bg-accent/30 transition-colors">
+              <CardContent className="py-3 flex items-center gap-3">
+                <div className="h-8 w-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
+                  <Cloud className="h-4 w-4 text-blue-600" />
+                </div>
+                <div className="min-w-0">
+                  <p className="font-medium text-sm">{service.name}</p>
+                  <p className="text-xs text-muted-foreground">{service.desc}</p>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      {/* MCP Ecosystem */}
       <Card>
         <CardContent className="py-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="font-semibold text-sm">MCP Ecosystem</p>
               <p className="text-xs text-muted-foreground">
-                28 MCP servers across 10 tiers — Context7, Stitch, GitHub, Firebase, Sentry, E2B, and more
+                24 MCP servers across 10 tiers — Context7, Stitch, GitHub, Firebase, Sentry, E2B, and more
               </p>
             </div>
             <Link href="/setup/config">
